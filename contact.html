@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bharatiya Mithas • Contact</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a class="brand" href="index.html"><span class="logo"></span> Bharatiya Mithas</a>
+      <div class="menu">
+        <a href="index.html">Home</a>
+        <a href="recipes.html">Recipes</a>
+        <a href="about.html">About</a>
+        <a class="active" href="contact.html">Contact</a>
+        <a href="admin/index.html">Admin</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Contact Us</h1>
+    <form class="form" action="#" method="post" onsubmit="event.preventDefault(); alert('Thanks! This demo form does not submit.');">
+      <div class="field"><label for="name">Name</label><input id="name" name="name" required /></div>
+      <div class="field"><label for="email">Email</label><input id="email" type="email" name="email" required /></div>
+      <div class="field"><label for="msg">Message</label><textarea id="msg" name="message" required></textarea></div>
+      <button class="button" type="submit">Send message</button>
+    </form>
+  </main>
+
+  <footer class="footer"><div class="container">© <span id="year"></span> Bharatiya Mithas</div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

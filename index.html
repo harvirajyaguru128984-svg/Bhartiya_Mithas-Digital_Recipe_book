@@ -1,0 +1,1819 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bharatiya Mithas • Single Page</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a class="brand" href="#home"><span class="logo"></span> Bharatiya Mithas</a>
+      <div class="menu" id="top-menu">
+        <a data-nav="home" href="#home">Home</a>
+        <a data-nav="recipes" href="#recipes">Recipes</a>
+        <a data-nav="about" href="#about">About</a>
+        <a data-nav="contact" href="#contact">Contact</a>
+       <a data-nav="admin" href="#admin">Admin</a>
+     </div>
+    </nav>
+  </header>
+
+  
+
+  <style>
+    :root {
+      --primary: #e7d5da;
+      --primary-light: rgba(139, 30, 63, 0.1);
+      --accent: #f29f05;
+      --success: #27ae60;
+      --danger: #e74c3c;
+      --warning: #f39c12;
+      --info: #3498db;
+    }
+
+    .admin-wrapper {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: calc(100vh - 60px);
+      gap: 0;
+    }
+
+    .sidebar {
+      background: linear-gradient(135deg, var(--primary) 0%, #6b1431 100%);
+      padding: 20px;
+      position: sticky;
+      top: 60px;
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+    }
+
+    .sidebar .logo {
+      color: white;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar .logo .icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent), #ffa500);
+      border-radius: 50%;
+    }
+
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar nav button {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: rgba(255,255,255,0.7);
+      padding: 12px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar nav button:hover,
+    .sidebar nav button.active {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      padding-left: 20px;
+    }
+
+    .sidebar nav button.active {
+      background: var(--accent);
+      color: var(--primary);
+    }
+
+    .main-content {
+      padding: 30px;
+      background: #f9f9f9;
+      max-height: calc(100vh - 60px);
+      overflow-y: auto;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #eee;
+    }
+
+    .page-header h1 {
+      margin: 0;
+      color: var(--primary);
+      font-size: 1.8rem;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #6b1431;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(139,30,63,0.3);
+    }
+
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #d0d0d0;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+      font-size: 0.85rem;
+      padding: 6px 12px;
+    }
+
+    .btn-danger:hover {
+      background: #c0392b;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #229954;
+    }
+
+    .admin-section {
+      display: none;
+    }
+
+    .admin-section.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-left: 4px solid var(--primary);
+    }
+
+    .stat-card.success { border-left-color: var(--success); }
+    .stat-card.warning { border-left-color: var(--warning); }
+    .stat-card.info { border-left-color: var(--info); }
+
+    .stat-card .number {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .stat-card .label {
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .table-container table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table-container table th {
+      background: #f5f5f5;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      color: #333;
+      border-bottom: 2px solid #eee;
+    }
+
+    .table-container table td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .table-container table tr:hover {
+      background: #fafafa;
+    }
+
+    .table-container table .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .categories-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .category-list {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .category-list h3 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+
+    .category-list ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .category-list li {
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+      background: #f9f9f9;
+      margin-bottom: 5px;
+      border-radius: 4px;
+    }
+
+    .category-list li:last-child {
+      border-bottom: none;
+    }
+
+    .remove-btn {
+      background: var(--danger);
+      color: white;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s ease;
+    }
+
+    .remove-btn:hover {
+      background: #c0392b;
+    }
+
+    .chart-container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+
+    .chart-container h3 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+
+    .simple-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .simple-bar .label {
+      width: 120px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .simple-bar .bar {
+      flex: 1;
+      height: 24px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .simple-bar .bar .value {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: white;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    @media (max-width: 1024px) {
+      .admin-wrapper {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+      }
+
+      .sidebar nav {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 5px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .categories-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+      .view-btn, .edit-btn, .delete-btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        color: white;
+        transition: all 0.2s ease;
+        margin-right: 4px;
+      }
+
+      .view-btn {
+        background: var(--success);
+      }
+
+      .view-btn:hover {
+        background: #229954;
+      }
+
+      .edit-btn {
+        background: var(--info);
+      }
+
+      .edit-btn:hover {
+        background: #2980b9;
+      }
+
+      .delete-btn {
+        background: var(--danger);
+      }
+
+      .delete-btn:hover {
+        background: #c0392b;
+      }
+
+      .recipe-content {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        margin: 30px 0;
+      }
+
+      .recipe-section {
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .recipe-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      .recipe-section h2 {
+        color: #8b1e3f;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        margin-top: 0;
+      }
+
+      .recipe-section ul,
+      .recipe-section ol {
+        padding-left: 24px;
+        line-height: 1.8;
+      }
+
+      .recipe-section li {
+        margin-bottom: 12px;
+        color: #333;
+      }
+
+      .recipe-section p {
+        margin-bottom: 15px;
+        color: #555;
+        line-height: 1.7;
+      }
+
+    @media (max-width: 768px) {
+      .recipe-content {
+        padding: 20px;
+      }
+
+      .recipe-section h2 {
+        font-size: 1.2rem;
+      }
+    }
+
+    .carousel-container {
+      position: relative;
+      /* make full-viewport width and center it */
+      width: 100vw;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #8b1e3f, #6b1431);
+      padding: 8px 0;
+      margin-bottom: 18px;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    .carousel {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      width: 100%;
+    }
+
+    .carousel-slide {
+      min-width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 0;
+    }
+
+    .carousel-slide-img { text-align: center; width: 100%; }
+
+    /* full-width image slides with responsive height */
+    .carousel-slide-img img {
+      width: 100%;
+      height: clamp(180px, 35vh, 360px);
+      display: block;
+      border-radius: 0;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+      object-fit: cover;
+    }
+
+    .carousel-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .carousel-btn {
+      background: rgba(255,255,255,0.3);
+      border: none;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .carousel-btn:hover {
+      background: rgba(255,255,255,0.5);
+    }
+
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      background: white;
+      width: 30px;
+      border-radius: 6px;
+    }
+
+    @media (max-width: 768px) {
+      .carousel-slide-img img { height: 200px; }
+      .carousel-controls,
+      .carousel-dots { display: none; }
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 900px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #eee;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: #8b1e3f;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #666;
+      transition: color 0.3s ease;
+    }
+
+    .modal-close:hover {
+      color: #333;
+    }
+
+    .recipe-view-section {
+      margin-bottom: 25px;
+    }
+
+    .recipe-view-section h3 {
+      color: #8b1e3f;
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+    }
+
+    .recipe-view-info {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .recipe-view-info-item {
+      background: #f9f9f9;
+      padding: 12px;
+      border-radius: 6px;
+      border-left: 3px solid #8b1e3f;
+    }
+
+    .recipe-view-info-label {
+      font-size: 0.85rem;
+      color: #666;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .recipe-view-info-value {
+      font-size: 1rem;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .recipe-view-img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      max-height: 300px;
+      object-fit: cover;
+    }
+
+    @media (max-width: 768px) {
+      .recipe-view-info {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .modal-content {
+        padding: 20px;
+      }
+    }
+  </style>  <main class="container">
+    <section data-route="home">
+      <!-- Image-only carousel (home page only) -->
+      <div class="carousel-container" id="carousel-container">
+        <div class="carousel" id="carousel">
+              <div class="carousel-slide"><div class="carousel-slide-img"><img src="gulab-jamun-recipe-01.webp" alt="Gulab Jamun"></div></div>
+              <div class="carousel-slide"><div class="carousel-slide-img"><img src="rasgulla2.jpg" alt="Rasgulla"></div></div>
+              <div class="carousel-slide"><div class="carousel-slide-img"><img src="mysore pak.jpg" alt="Mysore Pak"></div></div>
+              <div class="carousel-slide"><div class="carousel-slide-img"><img src="kaju-katli-recipe-1.webp" alt="Kaju Katli"></div></div>
+              <div class="carousel-slide"><div class="carousel-slide-img"><img src="jalebi.jpg" alt="Jalebi"></div></div>
+              <div class="carousel-slide"><div class="carousel-slide-img"><img src="besanladoo.jpg" alt="Besan Laddu"></div></div>
+              <div class="carousel-slide"><div class="carousel-slide-img"><img src="sandesh.jpg" alt="Sandesh"></div></div>
+              <div class="carousel-slide"><div class="carousel-slide-img"><img src="modak1.jpg" alt="Modak"></div></div>
+              <div class="carousel-slide"><div class="carousel-slide-img"><img src="Ghevar-Recipe-Indian-Sweet.jpg" alt="Ghevar"></div></div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-btn" id="carousel-prev" onclick="carouselMove(-1)">‹</button>
+          <button class="carousel-btn" id="carousel-next" onclick="carouselMove(1)">›</button>
+        </div>
+        <div class="carousel-dots" id="carousel-dots"></div>
+      </div>
+      <div class="hero">
+        <div class="cta">
+          <span class="badge">Traditional Indian Sweets</span>
+          <h1>Celebrate sweetness with authentic recipes</h1>
+          <p>From festive favorites like Gulab Jamun and Rasgulla to regional delights like Mysore Pak and Sandesh.</p>
+          <p><a class="button" href="#recipes">Explore Recipes</a></p>
+        </div>
+        <div>
+          <img src="indiansweetsbg.jpg" alt="Assorted Indian sweets" />
+        </div>
+      </div>
+
+      <section>
+        <h2>Featured Recipes</h2>
+        <div class="grid fancy-grid">
+          <div class="flip-card"><div class="inner">
+            <div class="front card"><img src="gulab-jamun-recipe-01.webp" alt="Gulab Jamun" /><div class="body"><h3>Gulab Jamun</h3><div class="meta">Khoya • 45 min</div></div></div>
+            <div class="back card"><div class="body"><p>Soft khoya dumplings in rose-cardamom syrup.</p><p><a class="button" href="#recipe/1">View recipe</a></p></div></div>
+          </div></div>
+          <div class="flip-card"><div class="inner">
+            <div class="front card"><img src="rasgulla2.jpg" alt="Rasgulla" /><div class="body"><h3>Rasgulla</h3><div class="meta">Chhena • 60 min</div></div></div>
+            <div class="back card"><div class="body"><p>Bengali chhena balls in light sugar syrup.</p><p><a class="button" href="#recipe/2">View recipe</a></p></div></div>
+          </div></div>
+          <div class="flip-card"><div class="inner">
+            <div class="front card"><img src="mysore pak.jpg" alt="Mysore Pak" /><div class="body"><h3>Mysore Pak</h3><div class="meta">Flour-based • 50 min</div></div></div>
+            <div class="back card"><div class="body"><p>Gram flour fudge rich with ghee and sugar.</p><p><a class="button" href="#recipe/3">View recipe</a></p></div></div>
+          </div></div>
+        </div>
+      </section>
+    </section>
+
+    <section data-route="recipes" hidden>
+      <div class="toolbar">
+        <input class="input" id="recipes-search" type="search" placeholder="Search sweets (e.g., laddu, barfi, halwa)" />
+        <select class="input" id="recipes-filter">
+          <option value="">All categories</option>
+          <option>Khoya</option>
+          <option>Chhena</option>
+          <option>Flour-based</option>
+          <option>Dry sweets</option>
+        </select>
+      </div>
+      <div id="recipes-grid" class="grid fancy-grid"></div>
+    </section>
+
+    <section data-route="recipe" hidden>
+      <article id="recipe-detail">
+        <header class="recipe-header">
+          <div>
+            <h1 id="recipe-detail-title">Gulab Jamun</h1>
+            <p class="meta" id="recipe-detail-desc">Soft milk-solid dumplings soaked in fragrant rose-cardamom syrup.</p>
+            <div class="info-badges">
+              <span class="info-badge"><strong>Prep:</strong> <span id="recipe-prep-time">15 min</span></span>
+              <span class="info-badge"><strong>Cook:</strong> <span id="recipe-cook-time">30 min</span></span>
+              <span class="info-badge"><strong>Serves:</strong> <span id="recipe-serves-count">4</span></span>
+              <span class="info-badge"><strong>Level:</strong> <span id="recipe-level">Beginner</span></span>
+            </div>
+          </div>
+          <div>
+            <img id="recipe-detail-img" src="gulab-jamun-recipe-01.webp" alt="Gulab Jamun" />
+          </div>
+        </header>
+
+        <div class="recipe-content">
+          <div class="recipe-section">
+            <h2>Ingredients</h2>
+            <ul id="recipe-ingredients-list">
+              <li>1 cup khoya (milk solids), crumbled</li>
+              <li>¼ cup maida (all-purpose flour)</li>
+              <li>¼ tsp baking soda</li>
+              <li>2-3 tbsp ghee</li>
+              <li>A few strands of saffron</li>
+              <li>4-5 green cardamom pods, crushed</li>
+              <li>2 cups sugar</li>
+              <li>2 cups water</li>
+              <li>½ tsp rose water</li>
+              <li>Oil for deep frying</li>
+            </ul>
+          </div>
+
+          <div class="recipe-section">
+            <h2>Instructions</h2>
+            <ol id="recipe-steps-list">
+              <li>Mix crumbled khoya with maida, baking soda, and a pinch of cardamom powder.</li>
+              <li>Add 1 tbsp ghee and knead gently into a soft dough. Let rest for 10 minutes.</li>
+              <li>Make small, smooth balls (about 1 inch diameter). Keep them covered.</li>
+              <li>Heat oil in a heavy-bottomed pan over medium heat. It should be hot but not smoking.</li>
+              <li>Fry gulab jamuns in batches until golden brown, turning occasionally (about 3-4 minutes).</li>
+              <li>In a heavy pan, dissolve sugar in water. Add saffron strands and cardamom pods.</li>
+              <li>Bring to a boil, then simmer for 2-3 minutes. Add rose water and cool the syrup.</li>
+              <li>Drop hot gulab jamuns into warm syrup immediately after frying.</li>
+              <li>Let them soak for at least 30 minutes before serving.</li>
+              <li>Serve chilled or at room temperature with a few syrup drops on top.</li>
+            </ol>
+          </div>
+
+          <div class="recipe-section">
+            <h2>Tips & Tricks</h2>
+            <ul>
+              <li>Keep the syrup warm when dipping the gulab jamuns for better absorption.</li>
+              <li>Use fresh khoya for the best texture. Stale khoya can make the jamuns crumbly.</li>
+              <li>Don't over-fry the jamuns—they should be light golden, not dark brown.</li>
+              <li>The oil temperature is crucial: too hot will brown the outside while leaving the inside raw; too cool will make them greasy.</li>
+              <li>You can add more rose water or a drop of kewra for a stronger fragrance.</li>
+            </ul>
+          </div>
+
+          <div class="recipe-section">
+            <h2>Variations</h2>
+            <p><strong>Malai Gulab Jamun:</strong> Mix cream or malai into the dough for a richer, creamier texture.</p>
+            <p><strong>Dry Gulab Jamun:</strong> Reduce the syrup and use thicker syrup to create a less wet version.</p>
+          </div>
+        </div>
+      </article>
+      <p style="margin-top: 30px;"><a href="#recipes" style="color: #8b1e3f; text-decoration: none; font-weight: 500;">← Back to all recipes</a></p>
+    </section>
+
+    <section data-route="about" hidden>
+      <h1>About Bharatiya Mithas</h1>
+      <p>Bharatiya Mithas is a simple, static website dedicated to Indian sweets.</p>
+    </section>
+
+    <section data-route="contact" hidden>
+      <h1>Contact Us</h1>
+      <form class="form"><div class="field"><label>Name</label><input/></div><div class="field"><label>Email</label><input type="email"/></div><div class="field"><label>Message</label><textarea></textarea></div><button class="button">Send</button></form>
+    </section>
+
+    <section data-route="admin" hidden style="padding: 0;">
+      <div class="admin-wrapper">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+          <div class="logo">
+            <div class="icon"></div>
+            <span>Admin</span>
+          </div>
+          <nav>
+            <button class="nav-btn active" data-section="dashboard">📊 Dashboard</button>
+            <button class="nav-btn" data-section="recipes">🍚 Manage Recipes</button>
+            <button class="nav-btn" data-section="add-recipe">➕ Add Recipe</button>
+            <button class="nav-btn" data-section="categories">🏷️ Categories</button>
+            <button class="nav-btn" data-section="analytics">📈 Analytics</button>
+          </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+          <!-- Dashboard Section -->
+          <div id="dashboard" class="admin-section active">
+            <div class="page-header">
+              <h1>Dashboard</h1>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="number">24</div>
+                <div class="label">Total Recipes</div>
+              </div>
+              <div class="stat-card success">
+                <div class="number">8</div>
+                <div class="label">Categories</div>
+              </div>
+              <div class="stat-card warning">
+                <div class="number">156</div>
+                <div class="label">User Submissions</div>
+              </div>
+              <div class="stat-card info">
+                <div class="number">1.2K</div>
+                <div class="label">Total Views</div>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <h3>Recipe Performance</h3>
+              <div class="simple-bar">
+                <div class="label">Gulab Jamun</div>
+                <div class="bar" style="width: 95%"><span class="value">95%</span></div>
+              </div>
+              <div class="simple-bar">
+                <div class="label">Rasgulla</div>
+                <div class="bar" style="width: 87%"><span class="value">87%</span></div>
+              </div>
+              <div class="simple-bar">
+                <div class="label">Jalebi</div>
+                <div class="bar" style="width: 79%"><span class="value">79%</span></div>
+              </div>
+              <div class="simple-bar">
+                <div class="label">Kaju Katli</div>
+                <div class="bar" style="width: 72%"><span class="value">72%</span></div>
+              </div>
+              <div class="simple-bar">
+                <div class="label">Barfi</div>
+                <div class="bar" style="width: 68%"><span class="value">68%</span></div>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <h3>Recent Activity</h3>
+              <table style="font-size: 0.9rem;">
+                <thead>
+                  <tr>
+                    <th>Action</th>
+                    <th>Recipe</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Added</td>
+                    <td>Kheer</td>
+                    <td>2 hours ago</td>
+                  </tr>
+                  <tr>
+                    <td>Edited</td>
+                    <td>Jalebi</td>
+                    <td>5 hours ago</td>
+                  </tr>
+                  <tr>
+                    <td>Viewed</td>
+                    <td>Gulab Jamun</td>
+                    <td>Today</td>
+                  </tr>
+                  <tr>
+                    <td>Submitted</td>
+                    <td>User Recipe</td>
+                    <td>Yesterday</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Manage Recipes Section -->
+          <div id="recipes" class="admin-section">
+            <div class="page-header">
+              <h1>Manage Recipes</h1>
+              <button class="btn btn-primary" onclick="adminSwitchSection('add-recipe')">+ Add New Recipe</button>
+            </div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Recipe</th>
+                    <th>Category</th>
+                    <th>Updated</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-recipes-tbody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Add Recipe Section -->
+          <div id="add-recipe" class="admin-section">
+            <div class="page-header">
+              <h1>Add New Recipe</h1>
+            </div>
+
+            <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+              <form id="add-recipe-form" onsubmit="adminSaveRecipe(event)">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="recipe-title">Recipe Title *</label>
+                    <input id="recipe-title" type="text" required placeholder="e.g., Gulab Jamun">
+                  </div>
+                  <div class="form-group">
+                    <label for="recipe-category">Category *</label>
+                    <select id="recipe-category" required>
+                      <option value="">-- Select Category --</option>
+                      <option value="Khoya">Khoya</option>
+                      <option value="Chhena">Chhena</option>
+                      <option value="Flour-based">Flour-based</option>
+                      <option value="Dry sweets">Dry sweets</option>
+                      <option value="Dairy">Dairy</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="recipe-prep">Prep Time</label>
+                    <input id="recipe-prep" type="text" placeholder="e.g., 15 min">
+                  </div>
+                  <div class="form-group">
+                    <label for="recipe-cook">Cook Time</label>
+                    <input id="recipe-cook" type="text" placeholder="e.g., 30 min">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="recipe-serves">Serves</label>
+                  <input id="recipe-serves" type="number" min="1" max="20" value="4">
+                </div>
+
+                <div class="form-group">
+                  <label for="recipe-ingredients">Ingredients (one per line) *</label>
+                  <textarea id="recipe-ingredients" required placeholder="1 cup milk powder&#10;1/4 cup flour&#10;..."></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="recipe-steps">Preparation Steps (one per line) *</label>
+                  <textarea id="recipe-steps" required placeholder="Step 1: Prepare ingredients&#10;Step 2: Mix and cook&#10;..."></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="recipe-image">Image URL</label>
+                  <input id="recipe-image" type="url" placeholder="https://example.com/image.jpg">
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Save Recipe</button>
+                  <button type="reset" class="btn btn-secondary">Clear</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Categories Section -->
+          <div id="categories" class="admin-section">
+            <div class="page-header">
+              <h1>Categories</h1>
+            </div>
+
+            <div class="categories-container">
+              <div class="category-list">
+                <h3>Existing Categories</h3>
+                <ul id="categories-list">
+                  <li>Khoya <button class="remove-btn" onclick="adminRemoveCategory('Khoya')">Remove</button></li>
+                  <li>Chhena <button class="remove-btn" onclick="adminRemoveCategory('Chhena')">Remove</button></li>
+                  <li>Flour-based <button class="remove-btn" onclick="adminRemoveCategory('Flour-based')">Remove</button></li>
+                  <li>Dry sweets <button class="remove-btn" onclick="adminRemoveCategory('Dry sweets')">Remove</button></li>
+                  <li>Dairy <button class="remove-btn" onclick="adminRemoveCategory('Dairy')">Remove</button></li>
+                  <li>Milk-based <button class="remove-btn" onclick="adminRemoveCategory('Milk-based')">Remove</button></li>
+                  <li>Festive <button class="remove-btn" onclick="adminRemoveCategory('Festive')">Remove</button></li>
+                  <li>Seasonal <button class="remove-btn" onclick="adminRemoveCategory('Seasonal')">Remove</button></li>
+                </ul>
+              </div>
+
+              <div class="category-list">
+                <h3>Add New Category</h3>
+                <form onsubmit="adminAddCategory(event)" style="padding: 10px;">
+                  <div class="form-group">
+                    <label for="new-category">Category Name *</label>
+                    <input id="new-category" type="text" required placeholder="e.g., Fruit-based">
+                  </div>
+                  <div class="form-group">
+                    <label for="category-desc">Description</label>
+                    <textarea id="category-desc" placeholder="Brief description" style="min-height: 80px;"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-success" style="width: 100%; margin-top: 10px;">Add Category</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analytics Section -->
+          <div id="analytics" class="admin-section">
+            <div class="page-header">
+              <h1>Analytics & Reports</h1>
+            </div>
+
+            <div class="chart-container">
+              <h3>Monthly Views</h3>
+              <div class="simple-bar">
+                <div class="label">January</div>
+                <div class="bar" style="width: 45%"><span class="value">450</span></div>
+              </div>
+              <div class="simple-bar">
+                <div class="label">February</div>
+                <div class="bar" style="width: 58%"><span class="value">580</span></div>
+              </div>
+              <div class="simple-bar">
+                <div class="label">March</div>
+                <div class="bar" style="width: 72%"><span class="value">720</span></div>
+              </div>
+              <div class="simple-bar">
+                <div class="label">April</div>
+                <div class="bar" style="width: 85%"><span class="value">850</span></div>
+              </div>
+              <div class="simple-bar">
+                <div class="label">May</div>
+                <div class="bar" style="width: 92%"><span class="value">920</span></div>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <h3>Top Recipes by Views</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Recipe Name</th>
+                    <th>Views</th>
+                    <th>Favorites</th>
+                    <th>Ratings</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Gulab Jamun</td>
+                    <td>1,250</td>
+                    <td>480</td>
+                    <td>4.8/5</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Rasgulla</td>
+                    <td>980</td>
+                    <td>420</td>
+                    <td>4.7/5</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>Jalebi</td>
+                    <td>850</td>
+                    <td>350</td>
+                    <td>4.6/5</td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>Kaju Katli</td>
+                    <td>720</td>
+                    <td>290</td>
+                    <td>4.5/5</td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>Kheer</td>
+                    <td>650</td>
+                    <td>240</td>
+                    <td>4.4/5</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="chart-container">
+              <h3>User Engagement</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Metric</th>
+                    <th>This Month</th>
+                    <th>Last Month</th>
+                    <th>Change</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Total Visits</td>
+                    <td>2,450</td>
+                    <td>2,100</td>
+                    <td style="color: #27ae60; font-weight: 600;">+16.7%</td>
+                  </tr>
+                  <tr>
+                    <td>User Submissions</td>
+                    <td>156</td>
+                    <td>132</td>
+                    <td style="color: #27ae60; font-weight: 600;">+18.2%</td>
+                  </tr>
+                  <tr>
+                    <td>Avg. Time on Site</td>
+                    <td>4m 23s</td>
+                    <td>3m 58s</td>
+                    <td style="color: #27ae60; font-weight: 600;">+10.5%</td>
+                  </tr>
+                  <tr>
+                    <td>Bounce Rate</td>
+                    <td>28%</td>
+                    <td>35%</td>
+                    <td style="color: #27ae60; font-weight: 600;">-20%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Recipe View Modal -->
+  <div class="modal" id="recipe-view-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-recipe-title">Recipe Title</h2>
+        <button class="modal-close" onclick="closeRecipeModal()">✕</button>
+      </div>
+
+      <img id="modal-recipe-img" src="" alt="" class="recipe-view-img">
+
+      <p id="modal-recipe-desc" style="color: #555; font-size: 1rem; line-height: 1.6; margin-bottom: 20px;"></p>
+
+      <div class="recipe-view-info">
+        <div class="recipe-view-info-item">
+          <div class="recipe-view-info-label">Prep Time</div>
+          <div class="recipe-view-info-value" id="modal-recipe-prep">15 min</div>
+        </div>
+        <div class="recipe-view-info-item">
+          <div class="recipe-view-info-label">Cook Time</div>
+          <div class="recipe-view-info-value" id="modal-recipe-cook">30 min</div>
+        </div>
+        <div class="recipe-view-info-item">
+          <div class="recipe-view-info-label">Serves</div>
+          <div class="recipe-view-info-value" id="modal-recipe-serves">4</div>
+        </div>
+        <div class="recipe-view-info-item">
+          <div class="recipe-view-info-label">Level</div>
+          <div class="recipe-view-info-value" id="modal-recipe-level">Beginner</div>
+        </div>
+      </div>
+
+      <div class="recipe-view-section">
+        <h3>Ingredients</h3>
+        <ul id="modal-recipe-ingredients" style="line-height: 1.8; margin-left: 20px;"></ul>
+      </div>
+
+      <div class="recipe-view-section">
+        <h3>Instructions</h3>
+        <ol id="modal-recipe-steps" style="line-height: 1.8; margin-left: 20px;"></ol>
+      </div>
+
+      <div class="recipe-view-section">
+        <h3>Tips & Tricks</h3>
+        <ul id="modal-recipe-tips" style="line-height: 1.8; margin-left: 20px;"></ul>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+        <button class="btn btn-secondary" onclick="closeRecipeModal()">Close</button>
+        <button class="btn btn-primary" onclick="closeRecipeModal(); adminEditRecipe(window._editingFromModalId)">Edit Recipe</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer"><div class="container">© <span id="year"></span> Bharatiya Mithas</div></footer>
+
+  <script>
+    // Router
+    const sections = Array.from(document.querySelectorAll('[data-route]'));
+    const validRoutes = new Set(sections.map(s=>s.dataset.route));
+    function setActiveTopNav(route){
+      document.querySelectorAll('#top-menu a').forEach(a=>{
+        a.classList.toggle('active', (route.startsWith('admin') ? a.dataset.nav==='admin' : a.dataset.nav===route));
+      });
+    }
+    function showRoute(route){
+      if(route.startsWith('recipe/')){ const id = Number(route.split('/')[1])||1; renderRecipe(id); route='recipe'; }
+      if(!validRoutes.has(route)) route='home';
+      sections.forEach(s=>s.hidden=s.dataset.route!==route);
+      setActiveTopNav(route); window.scrollTo({top:0,behavior:'instant'});
+    }
+    window.addEventListener('hashchange',()=>showRoute(location.hash.replace('#','')||'home'));
+
+    // Recipes rendering (local images)
+    const recipesData = [
+      {
+        id:1,
+        title:'Gulab Jamun',
+        cat:'Khoya',
+        img:'gulab-jamun-recipe-01.webp',
+        desc:'Soft khoya dumplings in rose-cardamom syrup.',
+        prep:'15 min',
+        cook:'30 min',
+        serves:'4',
+        level:'Beginner',
+        ingredients:[
+          '1 cup khoya (milk solids), crumbled',
+          '¼ cup maida (all-purpose flour)',
+          '¼ tsp baking soda',
+          '2-3 tbsp ghee',
+          'A few strands of saffron',
+          '4-5 green cardamom pods, crushed',
+          '2 cups sugar',
+          '2 cups water',
+          '½ tsp rose water',
+          'Oil for deep frying'
+        ],
+        steps:[
+          'Mix crumbled khoya with maida, baking soda, and a pinch of cardamom powder.',
+          'Add 1 tbsp ghee and knead gently into a soft dough. Let rest for 10 minutes.',
+          'Make small, smooth balls (about 1 inch diameter). Keep them covered.',
+          'Heat oil in a heavy-bottomed pan over medium heat. It should be hot but not smoking.',
+          'Fry gulab jamuns in batches until golden brown, turning occasionally (about 3-4 minutes).',
+          'In a heavy pan, dissolve sugar in water. Add saffron strands and cardamom pods.',
+          'Bring to a boil, then simmer for 2-3 minutes. Add rose water and cool the syrup.',
+          'Drop hot gulab jamuns into warm syrup immediately after frying.',
+          'Let them soak for at least 30 minutes before serving.',
+          'Serve chilled or at room temperature with a few syrup drops on top.'
+        ],
+        tips:[
+          'Keep the syrup warm when dipping the gulab jamuns for better absorption.',
+          'Use fresh khoya for the best texture. Stale khoya can make the jamuns crumbly.',
+          'Don\'t over-fry the jamuns—they should be light golden, not dark brown.',
+          'The oil temperature is crucial: too hot will brown the outside while leaving the inside raw; too cool will make them greasy.',
+          'You can add more rose water or a drop of kewra for a stronger fragrance.'
+        ],
+        variations:'Mix cream or malai into the dough for a richer, creamier texture.'
+      },
+      {
+        id:2,
+        title:'Rasgulla',
+        cat:'Chhena',
+        img:'rasgulla2.jpg',
+        desc:'Bengali chhena balls in light sugar syrup.',
+        prep:'20 min',
+        cook:'25 min',
+        serves:'6',
+        level:'Intermediate',
+        ingredients:[
+          '1 liter full-fat milk',
+          '¼ cup lemon juice or vinegar',
+          '1 cup semolina (suji)',
+          '¼ tsp baking soda',
+          '2 cups sugar',
+          '4 cups water',
+          'A few strands of saffron',
+          '3-4 green cardamom pods',
+          '1 tbsp rose water (optional)'
+        ],
+        steps:[
+          'Boil milk and add lemon juice to curdle it. Strain through muslin cloth.',
+          'Hang the cloth for 30 minutes to remove excess water.',
+          'Knead the chhena with semolina and baking soda until smooth.',
+          'Divide into small balls and roll gently in your palms.',
+          'In a heavy pan, dissolve 2 cups sugar in 4 cups water with cardamom pods.',
+          'Bring to a boil and gently slide in the chhena balls.',
+          'Cover and cook for 8-10 minutes until they float and swell.',
+          'Add saffron strands and simmer for another 5 minutes.',
+          'Add rose water and let cool completely.',
+          'Serve chilled in the syrup.'
+        ],
+        tips:[
+          'Use fresh, full-fat milk for the best chhena texture.',
+          'Don\'t overmix the dough or the rasgullas will become hard.',
+          'Ensure the syrup is boiling when you add the balls, or they may break.',
+          'The rasgullas will expand when cooked, so don\'t make them too large initially.',
+          'Store in the refrigerator for up to 5 days.'
+        ],
+        variations:'For a richer version, add malai or a bit of khoya to the chhena.'
+      },
+      {
+        id:3,
+        title:'Mysore Pak',
+        cat:'Flour-based',
+        img:'mysore pak.jpg',
+        desc:'Gram flour fudge rich with ghee and sugar.',
+        prep:'10 min',
+        cook:'40 min',
+        serves:'8',
+        level:'Intermediate',
+        ingredients:[
+          '1 cup gram flour (besan)',
+          '¾ cup ghee',
+          '¾ cup jaggery (gur), grated',
+          '1 tsp cardamom powder',
+          'A pinch of saffron strands'
+        ],
+        steps:[
+          'Heat ghee in a heavy-bottomed pan on medium heat.',
+          'Add gram flour and roast, stirring constantly for 15-20 minutes until it becomes golden and aromatic.',
+          'Add jaggery gradually while stirring continuously.',
+          'Keep stirring to prevent lumps and ensure even cooking.',
+          'When the mixture starts leaving the sides of the pan, add cardamom powder.',
+          'Continue stirring for another 5 minutes until the mixture becomes thick and glossy.',
+          'Pour onto a greased flat surface (marble or parchment paper).',
+          'Let it cool for a few minutes, then cut into diamond or square shapes.',
+          'Let cool completely before serving.'
+        ],
+        tips:[
+          'Use pure ghee for the authentic taste and texture.',
+          'The roasting time is crucial—don\'t skip it as it prevents a raw flour taste.',
+          'Keep the flame moderate to avoid burning the flour.',
+          'The mixture should be spreadable when poured; if too thick, add a tablespoon of ghee.',
+          'Store in an airtight container for up to 2 weeks.'
+        ],
+        variations:'Add cashews or almonds for added crunch and richness.'
+      },
+      {
+        id:4,
+        title:'Kaju Katli',
+        cat:'Dry sweets',
+        img:'kaju-katli-recipe-1.webp',
+        desc:'Diamond cashew fudge that melts in your mouth.',
+        prep:'15 min',
+        cook:'20 min',
+        serves:'12',
+        level:'Beginner',
+        ingredients:[
+          '1.5 cups cashew powder (roasted cashews ground)',
+          '1 cup powdered sugar',
+          '½ cup ghee',
+          '¼ tsp cardamom powder',
+          'A few strands of saffron (optional)',
+          'Silver foil (optional)'
+        ],
+        steps:[
+          'Heat ghee in a heavy pan over low heat.',
+          'Add cashew powder and stir continuously for 5-7 minutes until fragrant.',
+          'Add powdered sugar and cardamom powder.',
+          'Keep stirring for another 5 minutes until well combined.',
+          'When the mixture starts leaving the sides of the pan, pour onto a greased surface.',
+          'While still warm, press down and flatten the mixture to about ¼ inch thickness.',
+          'Cut into diamond shapes using a knife or diamond cutter.',
+          'Let cool completely before transferring to an airtight container.',
+          'Optionally, apply silver foil to each piece for a festive look.'
+        ],
+        tips:[
+          'Use quality cashews and grind them just before making for best results.',
+          'Don\'t overheat the mixture; it should be warm, not hot, when cutting.',
+          'Cut while the mixture is still slightly warm for clean diamond shapes.',
+          'Use parchment paper for easier removal and handling.',
+          'Store in a cool, dry place; avoid moisture.'
+        ],
+        variations:'Add a tablespoon of coconut powder or mix in chopped dry fruits for variety.'
+      },
+      {
+        id:5,
+        title:'Besan Laddu',
+        cat:'Flour-based',
+        img:'besan-laddu.jpg',
+        desc:'Nutty gram flour balls with ghee and cardamom.',
+        prep:'10 min',
+        cook:'15 min',
+        serves:'12',
+        level:'Beginner',
+        ingredients:[
+          '2 cups gram flour (besan)',
+          '1 cup ghee',
+          '¾ cup powdered sugar',
+          '½ tsp cardamom powder',
+          '¼ tsp saffron strands',
+          '¼ cup chopped dry fruits (almonds, cashews)',
+          'A pinch of salt'
+        ],
+        steps:[
+          'Heat ghee in a heavy pan on medium heat.',
+          'Add gram flour gradually and stir continuously.',
+          'Roast for 10-12 minutes, stirring often until the flour becomes golden brown and aromatic.',
+          'Turn off the heat and let cool for 2-3 minutes.',
+          'Add powdered sugar, cardamom powder, saffron, and dry fruits.',
+          'Mix well while the mixture is still warm.',
+          'Once cool enough to handle, roll into balls.',
+          'Store in an airtight container.'
+        ],
+        tips:[
+          'Roast the besan well to avoid a raw flour taste and for better digestion.',
+          'The mixture should be warm (not hot) when rolling into laddus.',
+          'Wet your palms slightly while rolling to prevent the mixture from crumbling.',
+          'Add more ghee if the mixture is too dry and crumbly.',
+          'These laddus are best enjoyed fresh but can be stored for up to 2 weeks.'
+        ],
+        variations:'Add grated coconut for a tropical twist or use jaggery instead of sugar.'
+      },
+      {id:6,title:'Sandesh',cat:'Chhena',img:'sandesh.jpg',desc:'Delicate Bengali sweet scented with saffron.',prep:'15 min',cook:'10 min',serves:'8',level:'Intermediate',ingredients:['1 kg full-fat milk','¼ cup lemon juice','1 cup powdered sugar','¼ tsp saffron strands','2-3 green cardamom pods, crushed','1 tbsp dried fruit toppings'],steps:['Boil milk and curdle with lemon juice.','Strain and hang in muslin cloth for 30 minutes.','Knead chhena with powdered sugar until smooth.','Shape into small pieces or press into molds.','Garnish with saffron and cardamom.','Top with dried fruits.'],tips:['Fresh chhena is key for soft, delicate sandesh.','Don\'t over-knead the mixture.','Serve immediately for the best texture.'],variations:'Use mango pulp or rose flavoring for different varieties.'},
+      {id:7,title:'Jalebi',cat:'Flour-based',img:'jalebi.jpg',desc:'Spiral crisp sweets soaked in saffron syrup.',prep:'20 min',cook:'30 min',serves:'8',level:'Intermediate',ingredients:['1 cup maida (all-purpose flour)','½ cup yogurt','½ tsp baking soda','2 cups sugar','1 cup water','A few saffron strands','Oil for frying'],steps:['Mix maida, yogurt, and baking soda into a batter.','Let ferment for 2-3 hours.','In a pan, dissolve sugar in water with saffron.','Heat oil in a deep pan.','Pour batter into a squeeze bottle.','Squeeze into hot oil in spiral shapes.','Fry until golden, then immediately soak in syrup.','Let drain on a rack before serving.'],tips:['The batter should be slightly thick for better frying.','Don\'t make the spirals too large.','Soak immediately after frying while both are hot.'],variations:'Add cardamom to the syrup for enhanced flavor.'},
+      {id:8,title:'Modak',cat:'Flour-based',img:'modak1.jpg',desc:'Steamed coconut-jaggery dumplings from Maharashtra.',prep:'30 min',cook:'20 min',serves:'10',level:'Intermediate',ingredients:['2 cups rice flour','1 cup grated coconut','¾ cup jaggery (gur)','2 tbsp ghee','4-5 green cardamom pods, crushed','Oil for the mold','Water as needed'],steps:['Mix jaggery with grated coconut and cardamom in a pan over low heat.','Stir until combined, then cool.','In another bowl, mix rice flour with water to form a soft dough.','Grease modak molds with oil.','Fill the mold with dough, then jaggery mixture, then dough again.','Press gently and push out onto a plate.','Steam modaks in a steamer for 8-10 minutes.','Serve warm with ghee.'],tips:['Don\'t make the dough too wet or it will tear.','Warm molds help the modaks release easily.','Traditionally served during Ganesh Chaturthi.'],variations:'Use wheat flour for a different texture and taste.'},
+      {id:9,title:'Ghevar',cat:'Flour-based',img:'Ghevar-Recipe-Indian-Sweet.jpg',desc:'Rajasthani honeycomb disc soaked in rabri.',prep:'20 min',cook:'30 min',serves:'8',level:'Advanced',ingredients:['2 cups maida (all-purpose flour)','½ cup ghee','1 cup sugar','2 cups water','1 liter milk (for rabri)','¼ cup condensed milk','2 tbsp khoya','Oil for frying','Dry fruits for garnish'],steps:['Prepare rabri by reducing milk to half volume in a heavy pan, stirring occasionally.','Prepare batter by mixing maida with water to form thin batter.','Heat oil in a heavy, flat pan (about 2-3 cm deep).','Pour batter in circular motions to form a honeycomb pattern disc.','Once set, gently flip and fry the other side until golden.','Transfer to a wide dish.','Pour warm rabri over the ghevar.','Soak for 30 minutes.','Top with dry fruits and silver foil before serving.'],tips:['The oil temperature is crucial for the honeycomb pattern.','Work quickly when pouring the batter for the pattern.','Traditional ghevar is quite rich and elaborate.'],variations:'Add makhana or other dry fruits for richness.'} 
+    ];
+
+    // Tracks current recipe being edited (null => creating new)
+    let editingRecipeId = null;
+    function renderRecipes(){
+      const grid = document.getElementById('recipes-grid');
+      const search = document.getElementById('recipes-search');
+      const filter = document.getElementById('recipes-filter');
+      if(!grid) return;
+      const q=(search?.value||'').toLowerCase(); const f=filter?.value||''; grid.innerHTML='';
+      recipesData.filter(r=>(!q||r.title.toLowerCase().includes(q)) && (!f||r.cat===f)).forEach(r=>{
+        const wrap=document.createElement('div'); wrap.className='flip-card';
+        wrap.innerHTML=`<div class="inner"><div class="front card"><img src="${r.img}" alt="${r.title}"><div class="body"><h3>${r.title}</h3><div class="meta">${r.cat}</div></div></div><div class="back card"><div class="body"><p>Taste the sweetness of ${r.title}.</p><p><a class="button" href="#recipe/${r.id}">View recipe</a></p></div></div></div>`; 
+        grid.appendChild(wrap);
+      });
+    }
+
+    function renderRecipe(id){
+      const r = recipesData.find(x=>x.id===id) || recipesData[0];
+      const sec = document.querySelector('[data-route="recipe"]');
+      
+      // Set basic info
+      document.getElementById('recipe-detail-title').textContent = r.title;
+      document.getElementById('recipe-detail-desc').textContent = r.desc;
+      document.getElementById('recipe-prep-time').textContent = r.prep;
+      document.getElementById('recipe-cook-time').textContent = r.cook;
+      document.getElementById('recipe-serves-count').textContent = r.serves;
+      document.getElementById('recipe-level').textContent = r.level;
+      document.getElementById('recipe-detail-img').src = r.img;
+      
+      // Set ingredients
+      const ingredientsList = document.getElementById('recipe-ingredients-list');
+      ingredientsList.innerHTML = '';
+      r.ingredients.forEach(ing => {
+        const li = document.createElement('li');
+        li.textContent = ing;
+        ingredientsList.appendChild(li);
+      });
+      
+      // Set steps
+      const stepsList = document.getElementById('recipe-steps-list');
+      stepsList.innerHTML = '';
+      r.steps.forEach(step => {
+        const li = document.createElement('li');
+        li.textContent = step;
+        stepsList.appendChild(li);
+      });
+    }
+
+    function renderAdminRecipes(){
+      const tbody = document.getElementById('admin-recipes-tbody'); 
+      if(!tbody) return; 
+      tbody.innerHTML='';
+      recipesData.forEach((r,i)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${i+1}</td><td>${r.title}</td><td>${r.cat}</td><td>Today</td><td class="actions"><button class="view-btn" onclick="adminViewRecipe(${r.id})">View</button> <button class="edit-btn" onclick="adminEditRecipe(${r.id}, '${r.title}')">Edit</button> <button class="delete-btn" onclick="adminDeleteRecipe(${r.id})">Delete</button></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Admin Dashboard Functions
+    document.addEventListener('DOMContentLoaded',()=>{ 
+      document.getElementById('year').textContent=new Date().getFullYear(); 
+      renderRecipes(); 
+      renderAdminRecipes(); 
+      showRoute(location.hash.replace('#','')||'home'); 
+      setupAdminNavigation();
+    });
+
+    function setupAdminNavigation(){
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const section = this.getAttribute('data-section');
+          adminSwitchSection(section);
+        });
+      });
+    }
+
+    function adminSwitchSection(sectionId) {
+      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.classList.add('active');
+        document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+      }
+    }
+
+    function adminSaveRecipe(event) {
+      event.preventDefault();
+      const title = document.getElementById('recipe-title').value.trim();
+      const category = document.getElementById('recipe-category').value;
+      const prep = document.getElementById('recipe-prep').value.trim();
+      const cook = document.getElementById('recipe-cook').value.trim();
+      const serves = document.getElementById('recipe-serves').value || '';
+      const ingredientsRaw = document.getElementById('recipe-ingredients').value.trim();
+      const stepsRaw = document.getElementById('recipe-steps').value.trim();
+      const image = document.getElementById('recipe-image').value.trim();
+
+      const ingredients = ingredientsRaw ? ingredientsRaw.split(/\r?\n/).map(s=>s.trim()).filter(Boolean) : [];
+      const steps = stepsRaw ? stepsRaw.split(/\r?\n/).map(s=>s.trim()).filter(Boolean) : [];
+
+      if (!title) { alert('Please provide a recipe title.'); return; }
+
+      if (editingRecipeId) {
+        // Update existing
+        const idx = recipesData.findIndex(r => r.id === editingRecipeId);
+        if (idx !== -1) {
+          recipesData[idx] = Object.assign({}, recipesData[idx], {
+            title, cat: category, prep, cook, serves, img: image || recipesData[idx].img, ingredients, steps
+          });
+          alert(`✅ Recipe "${title}" updated successfully!`);
+        } else {
+          alert('Could not find recipe to update. It may have been removed.');
+        }
+      } else {
+        // Create new
+        const newId = (recipesData.reduce((m,r)=> Math.max(m, r.id||0), 0) || 0) + 1;
+        const newRecipe = {
+          id: newId,
+          title,
+          cat: category,
+          img: image || '',
+          desc: steps.slice(0,2).join(' '),
+          prep, cook, serves, level: 'Beginner',
+          ingredients, steps, tips: []
+        };
+        recipesData.push(newRecipe);
+        alert(`✅ Recipe "${title}" created successfully!`);
+      }
+
+      // Reset form and state
+      editingRecipeId = null;
+      document.getElementById('add-recipe-form').reset();
+      renderAdminRecipes();
+      renderRecipes();
+      adminSwitchSection('recipes');
+    }
+
+    function adminEditRecipe(id, name) {
+      // If modal is open, close it before switching to edit form
+      try { closeRecipeModal(); } catch (e) {}
+      const recipe = recipesData.find(r => r.id === id);
+      if (!recipe) {
+        alert('Recipe not found');
+        return;
+      }
+      editingRecipeId = id;
+      document.getElementById('recipe-title').value = recipe.title || '';
+      document.getElementById('recipe-category').value = recipe.cat || '';
+      document.getElementById('recipe-prep').value = recipe.prep || '';
+      document.getElementById('recipe-cook').value = recipe.cook || '';
+      document.getElementById('recipe-serves').value = recipe.serves || '';
+      document.getElementById('recipe-ingredients').value = (recipe.ingredients || []).join('\n');
+      document.getElementById('recipe-steps').value = (recipe.steps || []).join('\n');
+      document.getElementById('recipe-image').value = recipe.img || '';
+      adminSwitchSection('add-recipe');
+    }
+
+    function adminDeleteRecipe(id) {
+      if (confirm('Are you sure you want to delete this recipe?')) {
+        alert('✅ Recipe deleted!');
+      }
+    }
+
+    function adminAddCategory(event) {
+      event.preventDefault();
+      const categoryName = document.getElementById('new-category').value;
+      const li = document.createElement('li');
+      li.innerHTML = `${categoryName} <button class="remove-btn" onclick="adminRemoveCategory('${categoryName}')">Remove</button>`;
+      document.getElementById('categories-list').appendChild(li);
+      alert(`✅ Category "${categoryName}" added!`);
+      event.target.reset();
+    }
+
+    function adminRemoveCategory(name) {
+      if (confirm(`Remove category "${name}"?`)) {
+        document.querySelectorAll('#categories-list li').forEach(li => {
+          if (li.textContent.includes(name)) li.remove();
+        });
+        alert(`✅ Category removed!`);
+      }
+    }
+
+    document.getElementById('recipes-search')?.addEventListener('input',renderRecipes);
+    document.getElementById('recipes-filter')?.addEventListener('change',renderRecipes);
+
+    // Carousel functionality
+    let carouselIndex = 0;
+    const carouselSlides = document.querySelectorAll('.carousel-slide');
+    const totalSlides = carouselSlides.length;
+
+    function initCarousel() {
+      const dotsContainer = document.getElementById('carousel-dots');
+      if (!dotsContainer) return;
+      
+      // Create dots
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('span');
+        dot.classList.add('dot');
+        if (i === 0) dot.classList.add('active');
+        dot.onclick = () => goToSlide(i);
+        dotsContainer.appendChild(dot);
+      }
+      
+      // Auto-advance carousel every 8 seconds
+      setInterval(() => {
+        carouselIndex = (carouselIndex + 1) % totalSlides;
+        updateCarousel();
+      }, 8000);
+    }
+
+    function carouselMove(direction) {
+      carouselIndex = (carouselIndex + direction + totalSlides) % totalSlides;
+      updateCarousel();
+    }
+
+    function goToSlide(index) {
+      carouselIndex = index;
+      updateCarousel();
+    }
+
+    function updateCarousel() {
+      const carousel = document.getElementById('carousel');
+      if (carousel) {
+        carousel.style.transform = `translateX(-${carouselIndex * 100}%)`;
+      }
+      
+      // Update dots
+      document.querySelectorAll('.dot').forEach((dot, index) => {
+        dot.classList.toggle('active', index === carouselIndex);
+      });
+    }
+
+    // Recipe Modal functions
+    function adminViewRecipe(recipeId) {
+      const recipe = recipesData.find(r => r.id === recipeId);
+      if (!recipe) return;
+
+      document.getElementById('modal-recipe-title').textContent = recipe.title;
+      document.getElementById('modal-recipe-img').src = recipe.img;
+      document.getElementById('modal-recipe-img').alt = recipe.title;
+      document.getElementById('modal-recipe-desc').textContent = recipe.desc;
+      document.getElementById('modal-recipe-prep').textContent = recipe.prep;
+      document.getElementById('modal-recipe-cook').textContent = recipe.cook;
+      document.getElementById('modal-recipe-serves').textContent = recipe.serves;
+      document.getElementById('modal-recipe-level').textContent = recipe.level;
+
+      // Set ingredients
+      const ingredientsList = document.getElementById('modal-recipe-ingredients');
+      ingredientsList.innerHTML = '';
+      recipe.ingredients.forEach(ing => {
+        const li = document.createElement('li');
+        li.textContent = ing;
+        ingredientsList.appendChild(li);
+      });
+
+      // Set steps
+      const stepsList = document.getElementById('modal-recipe-steps');
+      stepsList.innerHTML = '';
+      recipe.steps.forEach(step => {
+        const li = document.createElement('li');
+        li.textContent = step;
+        stepsList.appendChild(li);
+      });
+
+      // Set tips
+      const tipsList = document.getElementById('modal-recipe-tips');
+      tipsList.innerHTML = '';
+      if (recipe.tips) {
+        recipe.tips.forEach(tip => {
+          const li = document.createElement('li');
+          li.textContent = tip;
+          tipsList.appendChild(li);
+        });
+      }
+
+      // expose id so modal Edit button can reuse it
+      window._editingFromModalId = recipeId;
+      document.getElementById('recipe-view-modal').classList.add('active');
+    }
+
+    function closeRecipeModal() {
+      document.getElementById('recipe-view-modal').classList.remove('active');
+    }
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+      const modal = document.getElementById('recipe-view-modal');
+      if (event.target === modal) {
+        modal.classList.remove('active');
+      }
+    });
+
+    // Initialize carousel on page load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCarousel);
+    } else {
+      initCarousel();
+    }
+  </script>
+</body>
+</html>

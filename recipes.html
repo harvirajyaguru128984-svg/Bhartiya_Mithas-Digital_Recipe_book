@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bharatiya Mithas • Recipes</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a class="brand" href="index.html"><span class="logo"></span> Bharatiya Mithas</a>
+      <div class="menu">
+        <a href="index.html">Home</a>
+        <a class="active" href="recipes.html">Recipes</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="admin/index.html">Admin</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="toolbar">
+      <input class="input" id="search" type="search" placeholder="Search sweets (e.g., laddu, barfi, halwa)" />
+      <select class="input" id="filter">
+        <option value="">All categories</option>
+        <option>Khoya</option>
+        <option>Chhena</option>
+        <option>Flour-based</option>
+        <option>Dry sweets</option>
+      </select>
+    </div>
+
+    <div id="grid" class="grid">
+      <!-- Cards populated by JS -->
+    </div>
+  </main>
+
+  <footer class="footer"><div class="container">© <span id="year"></span> Bharatiya Mithas</div></footer>
+  <script>
+    const data = [
+      {id:1,title:'Gulab Jamun',cat:'Khoya',img:'https://upload.wikimedia.org/wikipedia/commons/4/49/Gulab_Jamun_%28homemade%29.jpg'},
+      {id:2,title:'Rasgulla',cat:'Chhena',img:'https://upload.wikimedia.org/wikipedia/commons/6/6b/Rasgulla_%28Odisha%29.jpg'},
+      {id:3,title:'Mysore Pak',cat:'Flour-based',img:'https://upload.wikimedia.org/wikipedia/commons/5/5b/Mysore_Pak.jpg'},
+      {id:4,title:'Kaju Katli',cat:'Dry sweets',img:'https://upload.wikimedia.org/wikipedia/commons/2/2c/Kaju_Katli.jpg'},
+      {id:5,title:'Besan Laddu',cat:'Flour-based',img:'https://upload.wikimedia.org/wikipedia/commons/5/56/Besan_laddu.jpg'},
+      {id:6,title:'Sandesh',cat:'Chhena',img:'https://upload.wikimedia.org/wikipedia/commons/8/8e/Sandesh_-_Kolkata_2011-07-07_0627.JPG'},
+      {id:7,title:'Jalebi',cat:'Flour-based',img:'https://upload.wikimedia.org/wikipedia/commons/7/79/Jalebi.jpg'},
+      {id:8,title:'Modak',cat:'Flour-based',img:'https://upload.wikimedia.org/wikipedia/commons/7/7f/Ukadiche_modak.jpg'},
+      {id:9,title:'Ghevar',cat:'Flour-based',img:'https://upload.wikimedia.org/wikipedia/commons/a/a9/Ghevar.JPG'}
+    ];
+    const grid = document.getElementById('grid');
+    const search = document.getElementById('search');
+    const filter = document.getElementById('filter');
+    function render(){
+      grid.innerHTML = '';
+      const q = search.value.toLowerCase();
+      const f = filter.value;
+      data.filter(r=>(!q||r.title.toLowerCase().includes(q)) && (!f||r.cat===f))
+          .forEach(r=>{
+            const wrap = document.createElement('div');
+            wrap.className = 'flip-card';
+            wrap.innerHTML = `
+              <div class="inner">
+                <div class="front card">
+                  <img src="${r.img}" alt="${r.title}">
+                  <div class="body"><h3>${r.title}</h3><div class="meta">${r.cat}</div></div>
+                </div>
+                <div class="back card">
+                  <div class="body"><p>Taste the sweetness of ${r.title}.</p><p><a class="button" href="recipe.html?id=${r.id}">View recipe</a></p></div>
+                </div>
+              </div>`;
+            grid.appendChild(wrap);
+          });
+          
+    }
+    search.addEventListener('input',render);
+    filter.addEventListener('change',render);
+    render();
+    document.getElementById('year').textContent = new Date().getFullYear();
+    
+  </script>
+</body>
+</html>

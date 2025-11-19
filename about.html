@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bharatiya Mithas • About</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a class="brand" href="index.html"><span class="logo"></span> Bharatiya Mithas</a>
+      <div class="menu">
+        <a href="index.html">Home</a>
+        <a href="recipes.html">Recipes</a>
+        <a class="active" href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="admin/index.html">Admin</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>About Bharatiya Mithas</h1>
+    <p>Bharatiya Mithas is a simple, static website dedicated to Indian sweets. Explore regional classics, quick festival treats, and timeless recipes—curated for both beginners and seasoned cooks.</p>
+    <h2>What you'll find</h2>
+    <ul>
+      <li>Step-by-step recipes with ingredients and timings</li>
+      <li>Categories like Khoya-based, Chhena-based, and flour/dry sweets</li>
+      <li>Clean, mobile-friendly pages</li>
+    </ul>
+    <p>Want to contribute or manage recipes? Visit the <a href="admin/index.html">Admin</a> area.</p>
+  </main>
+
+  <footer class="footer"><div class="container">© <span id="year"></span> Bharatiya Mithas</div></footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
